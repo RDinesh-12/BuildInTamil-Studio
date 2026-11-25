@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuildInTamil Studio — Official Game Studio</title>
+  <meta name="description" content="BuildInTamil Studio is an independent game development studio crafting next-generation 3D spatial puzzles and HTML5 interactive experiences." />
+  <link rel="icon" type="image/png" href="./assets/images/small_app_icon_16x16.png" />
+  <style>
+    :root {
+      --bg: #090812;
+      --card-bg: #141124;
+      --card-hover: #1c1833;
+      --border: #272144;
+      --border-bright: #3d3568;
+      --accent: #7ebdb6;
+      --accent-glow: rgba(126, 189, 182, 0.3);
+      --accent-gold: #f2d388;
+      --text: #f5f2eb;
+      --text-muted: #aca3c9;
+      --text-dim: #736a94;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background gradient */
+    .ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 600px;
+      background: radial-gradient(circle at 50% 15%, rgba(126, 189, 182, 0.12) 0%, rgba(9, 8, 18, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 8, 18, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border-bright);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn-nav {
+      background: var(--accent);
+      color: #090812;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: #99ded7;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(126, 189, 182, 0.1);
+      border: 1px solid rgba(126, 189, 182, 0.3);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lead {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #7ebdb6 0%, #68a8a1 100%);
+      color: #090812;
+      padding: 14px 32px;
+      border-radius: 30px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 24px var(--accent-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(126, 189, 182, 0.4);
+      background: linear-gradient(135deg, #92d4cd 0%, #7ebdb6 100%);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-bright);
+      color: var(--text);
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--card-hover);
+      border-color: var(--text-muted);
+      transform: translateY(-2px);
+    }
+
+    /* Section Styling */
+    section {
+      padding: 60px 0;
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+    }
+
+    .section-eyebrow {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-top: 8px;
+    }
+
+    /* Game Showcase Card */
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      transition: border-color 0.3s;
+    }
+
+    .game-card:hover {
+      border-color: var(--border-bright);
+    }
+
+    @media (min-width: 900px) {
+      .game-card {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    .game-media {
+      position: relative;
+      background: #0d0b1a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    @media (min-width: 900px) {
+      .game-media {
+        border-bottom: none;
+        border-right: 1px solid var(--border);
+      }
+    }
+
+    .game-media img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .game-video-container {
+      padding: 16px;
+      background: #090812;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+    }
+
+    .game-info {
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .game-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tag {
+      background: rgba(242, 211, 136, 0.12);
+      color: var(--accent-gold);
+      border: 1px solid rgba(242, 211, 136, 0.3);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .tag-platform {
+      background: rgba(126, 189, 182, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(126, 189, 182, 0.3);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .game-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .game-tagline {
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .game-desc {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .features-list li svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Grid for Features / Info */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      transition: all 0.25s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(126, 189, 182, 0.15);
+      border: 1px solid rgba(126, 189, 182, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .card-text {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Verification & Contact Box */
+    .verification-card {
+      background: linear-gradient(145deg, #161229 0%, #100d1e 100%);
+      border: 1px solid var(--border-bright);
+      border-radius: 24px;
+      padding: 40px;
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 800px) {
+      .verification-card {
+        grid-template-columns: 1.2fr 1fr;
+      }
+    }
+
+    .contact-spec-item {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .contact-spec-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .contact-spec-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .contact-spec-value a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .contact-spec-value a:hover {
+      color: var(--accent-gold);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+      background: #07060e;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-copy {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Navigation -->
+  <header>
+    <nav>
+      <a href="index.html" class="brand">
+        <img src="./assets/images/app_icon_1024x1024.png" alt="BuildInTamil Studio" />
+        <span>BuildInTamil Studio</span>
+      </a>
+      <div class="nav-links">
+        <a href="#games">Games</a>
+        <a href="#about">About</a>
+        <a href="#verification">Verification</a>
+        <a href="contact.html">Contact</a>
+        <a href="https://rdinesh-12.github.io/Astral--Terraces-/" target="_blank" class="btn-nav">Play Game ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="badge-pill">
+        <span class="badge-dot"></span>
+        Official Game Development Studio • India
+      </div>
+      <h1>Pioneering 3D Spatial Puzzles & Web Gaming</h1>
+      <p class="hero-lead">
+        We build mesmerizing, physics-driven interactive worlds and HTML5 games designed for zero-install instant play across global platforms.
+      </p>
+      <div class="hero-actions">
+        <a href="https://rdinesh-12.github.io/Astral--Terraces-/" target="_blank" class="btn-primary">
+          ▶ Play Astral Terraces Live
+        </a>
+        <a href="#games" class="btn-secondary">Explore Our Game</a>
+        <a href="#verification" class="btn-secondary">Studio Details</a>
+      </div>
+    </section>
+
+    <!-- Games Showcase -->
+    <section id="games">
+      <div class="section-header">
+        <div class="section-eyebrow">Flagship Release</div>
+        <h2 class="section-title">Astral Terraces</h2>
+        <p class="section-desc">A serene 3D isometric puzzle journey navigating floating sanctuaries and sacred perspective shifts.</p>
+      </div>
+
+      <div class="game-card">
+        <div class="game-media">
+          <img src="./assets/images/cover_image_1200x628.png" alt="Astral Terraces Cover" />
+          <div class="game-video-container">
+            <video controls poster="./assets/images/cover_image_1200x628.png" preload="metadata">
+              <source src="./assets/images/preview_video_1280x720.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+
+        <div class="game-info">
+          <div>
+            <div class="game-tags">
+              <span class="tag">Three.js 3D</span>
+              <span class="tag">Rapier Physics</span>
+              <span class="tag">Spatial Puzzles</span>
+              <span class="tag-platform">Facebook Instant Games</span>
+              <span class="tag-platform">YouTube Playables</span>
+              <span class="tag-platform">Web Browser</span>
+            </div>
+            <h3 class="game-title">Astral Terraces</h3>
+            <div class="game-tagline">Rotate Perspectives. Align the Impossible.</div>
+            <p class="game-desc">
+              Guide an ethereal cosmic orb through 10 handcrafted worlds perched high in the clouds. Rotate rotatable bridges, activate vertical pillars, trigger pressure switches, and collect astral relics to unlock the sacred exit beacon.
+            </p>
+
+            <ul class="features-list">
+              <li>
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span><strong>10 Handcrafted Spatial Levels</strong> with escalating mechanics and optical shifts</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span><strong>Zero-Install WebGL</strong> running silky smooth at 60 FPS on mobile and desktop</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span><strong>Interactive Audio & Physics</strong> powered by Web Audio and Rapier 3D</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span><strong>Cloud & Local Progress</strong> with instant save and high score tracking</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <a href="https://rdinesh-12.github.io/Astral--Terraces-/" target="_blank" class="btn-primary" style="width: 100%; justify-content: center;">
+              Launch Astral Terraces in Browser ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Studio Pillars Section -->
+    <section id="about">
+      <div class="section-header">
+        <div class="section-eyebrow">Studio Vision</div>
+        <h2 class="section-title">Built for Modern Interactive Gaming</h2>
+        <p class="section-desc">We combine elegant spatial mathematics, modern web graphics, and clean design.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title">Instant Accessibility</h3>
+          <p class="card-text">
+            No massive downloads or friction. Our games boot in milliseconds inside web browsers, social feeds, and instant game platforms.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">✨</div>
+          <h3 class="card-title">Spatial Architecture</h3>
+          <p class="card-text">
+            Inspired by sacred geometry, isometric perspective illusions, and mindful puzzle pacing that stimulates spatial reasoning.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <h3 class="card-title">Multi-Platform Ecosystem</h3>
+          <p class="card-text">
+            Fully engineered for Meta / Facebook Instant Games, YouTube Playables, and progressive web applications with unified SDK adapters.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Official Verification & Contact Section -->
+    <section id="verification">
+      <div class="section-header">
+        <div class="section-eyebrow">Official Business Profile</div>
+        <h2 class="section-title">Verification & Partner Inquiries</h2>
+        <p class="section-desc">
+          Official contact details and legal identity for Meta Business Verification, Google Playables, Apple Developer, and publishing partners.
+        </p>
+      </div>
+
+      <div class="verification-card">
+        <div>
+          <h3 style="font-size: 1.4rem; color: #ffffff; margin-bottom: 16px;">BuildInTamil Studio</h3>
+          <p style="color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;">
+            BuildInTamil Studio is an independent games studio headquartered in Tamil Nadu, India. We design, develop, and distribute interactive software, 3D web games, and digital entertainment experiences.
+          </p>
+
+          <div style="background: rgba(126, 189, 182, 0.08); border: 1px solid rgba(126, 189, 182, 0.25); border-radius: 12px; padding: 16px;">
+            <div style="color: var(--accent); font-weight: 700; font-size: 0.9rem; margin-bottom: 4px;">Verified Identity Information</div>
+            <div style="color: var(--text-muted); font-size: 0.85rem;">
+              Registered business profile for developer identification, legal compliance, policy evaluation, and commercial distribution.
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="contact-spec-item">
+            <span class="contact-spec-label">Business / Entity Name</span>
+            <span class="contact-spec-value">BuildInTamil Studio</span>
+          </div>
+
+          <div class="contact-spec-item">
+            <span class="contact-spec-label">Official Studio Email</span>
+            <span class="contact-spec-value"><a href="mailto:buildintamil@gmail.com">buildintamil@gmail.com</a></span>
+          </div>
+
+          <div class="contact-spec-item">
+            <span class="contact-spec-label">Official Phone</span>
+            <span class="contact-spec-value"><a href="tel:+919342477032">+91 9342477032</a></span>
+          </div>
+
+          <div class="contact-spec-item">
+            <span class="contact-spec-label">Region / Jurisdiction</span>
+            <span class="contact-spec-value">Tamil Nadu, India</span>
+          </div>
+
+          <div class="contact-spec-item">
+            <span class="contact-spec-label">Live Game URL</span>
+            <span class="contact-spec-value"><a href="https://rdinesh-12.github.io/Astral--Terraces-/" target="_blank">Astral Terraces on GitHub Pages</a></span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div style="font-weight: 700; color: #ffffff; font-size: 1.1rem; margin-bottom: 8px;">BuildInTamil Studio</div>
+      <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto;">Independent Game Studio • Tamil Nadu, India</p>
+
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="#games">Games</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="contact.html">Contact & Verification</a>
+      </div>
+
+      <div class="footer-copy">
+        © 2026 BuildInTamil Studio. All rights reserved. Astral Terraces is a trademark of BuildInTamil Studio.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
